@@ -178,6 +178,112 @@ That confirmed everything in the LAMP stack was communicating correctly:
 
 From here, the next part will be adding an intentionally vulnerable login form — then testing things like SQL injection and improper authentication handling before locking them down.
 
+---
+
+### Building a Insecure Login Page: 
+
+I needed to tie my PHP front-end to my MySQL backend to focus on an SQL injection.
+
+Creating a file called login.php inside of my project folder at:
+
+`C:\xampp\htdocs\VulnTasks-LAMP-LAB\public_html\`
+
+`login.php` basic code:
+
+```
+<?php
+// Simple vulnerable login page for demonstration
+include '../includes/db_connect.php';
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VulnTasks Login</title>
+</head>
+<body style="font-family:Arial; margin:50px;">
+  <h2>Login Portal (Vulnerable Demo)</h2>
+  <form method="POST" action="">
+    <label>Username:</label><br>
+    <input type="text" name="username"><br><br>
+    <label>Password:</label><br>
+    <input type="password" name="password"><br><br>
+    <input type="submit" name="submit" value="Login">
+  </form>
+
+  <hr>
+
+<?php
+if (isset($_POST['submit'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    echo "<p>Checking credentials for: <b>$username</b></p>";
+
+    // ❌ intentionally vulnerable (no sanitization)
+    $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+    $result = $conn->query($query);
+
+    if ($result && $result->num_rows > 0) {
+        echo "<p style='color:green;'>Login successful!</p>";
+    } else {
+        echo "<p style='color:red;'>Invalid username or password.</p>";
+    }
+}
+?>
+</body>
+</html>
+```
+
+---
+
+### Testing and Demonstrating SQL Injection
+
+Once that was created it was time to visit the login webpage at:
+
+http://localhost/VulnTasks-LAMP-LAB/public_html/login.php
+
+<img width="503" height="281" alt="image" src="https://github.com/user-attachments/assets/94f5924b-94a9-4be1-84f1-268b4c7707f6" />
+
+After entering the correct credentials {admin:admin123} there was a "Login successful" message:
+
+<img width="509" height="367" alt="image" src="https://github.com/user-attachments/assets/540842b5-863c-46d3-91f9-395c1daaf44a" />
+
+Testing the login with incorrect credentials {test:testing} : 
+
+<img width="457" height="350" alt="image" src="https://github.com/user-attachments/assets/2a6f5fc3-e46f-4639-84df-e5085d44a539" />
+
+
+I now wanted to test what would happen if I attempted an SQL injection with either of the below and it is successful.
+
+```
+' OR 1=1 --
+' UNION SELECT null,null,null --
+```
+
+<img width="628" height="359" alt="image" src="https://github.com/user-attachments/assets/720e21d1-ed33-4807-b524-fe24b86fd636" />
+
+This confirms that the current login logic directly concatenates user input into the SQL query without validation or parameter binding.
+
+Root cause:
+
+```
+$query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+
+```
+
+Because variables are interpolated directly, the database interprets injected code.
+
+
+
+
+
+
+
+
+
+
 
 
 
