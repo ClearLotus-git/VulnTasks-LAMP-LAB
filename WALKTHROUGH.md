@@ -221,7 +221,7 @@ if (isset($_POST['submit'])) {
 
     echo "<p>Checking credentials for: <b>$username</b></p>";
 
-    // ❌ intentionally vulnerable (no sanitization)
+    // intentionally vulnerable (no sanitization)
     $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
     $result = $conn->query($query);
 
