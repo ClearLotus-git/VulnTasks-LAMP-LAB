@@ -164,7 +164,7 @@ if ($conn->connect_error) {
 
 Running it at:
 
-`http://localhost/VulnTasks-LAMP-LAB/public_html/test_db.php`
+http://localhost/VulnTasks-LAMP-LAB/public_html/test_db.php
 
 After creating the database correctly, it displayed:
 
