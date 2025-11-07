@@ -20,5 +20,7 @@ I’ll be using this as a sandbox for SQL injection, XSS, and other web app secu
 
 ---
 
+You can follow the full step-by-step guide here:  
+--->[View the Walkthrough](./WALKTHROUGH.md)<---
 
 
